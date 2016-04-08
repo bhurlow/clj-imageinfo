@@ -3,6 +3,7 @@
 
 ;; ===== UTIL
 
+;; TODO I forgot this was lazy...
 (defn read-bytes [stream n]
   (for [x (range n)]
     (.read stream)))
@@ -17,6 +18,11 @@
     (bit-shift-left b 8)
     a))
 
+(defn u32 [byte-values]
+  (.getInt
+    (doto (java.nio.ByteBuffer/wrap (byte-array byte-values))
+      (.order java.nio.ByteOrder/BIG_ENDIAN))))
+
 (def png-signature 
   [137 80 78 71 13 10 26 10])
 
@@ -25,6 +31,15 @@
 (defn recognize-jpeg [])
 
 (defn recognize-gif [])
+
+;; ===== PNG
+
+(defn read-png []
+  (let [stream (io/input-stream "test/imageinfo/test_images/png/333x333.png")]
+    ;; skip header info
+    (doall (read-bytes stream 16))
+    {:width (u32 (read-bytes stream 4))
+     :height (u32 (read-bytes stream 4))}))
 
 ;; ===== JPEG
 
