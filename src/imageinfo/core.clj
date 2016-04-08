@@ -10,6 +10,13 @@
 (defn square [x]
   (* x x))
 
+(defn u16 
+  "returns a little endian unsigned 16 bit integer"
+  [a b]
+  (bit-or
+    (bit-shift-left b 8)
+    a))
+
 (def png-signature 
   [137 80 78 71 13 10 26 10])
 
@@ -19,16 +26,46 @@
 
 (defn recognize-gif [])
 
+;; ===== JPEG
+
+(def jpeg-sof
+  #{0xc0
+    0xc1
+    0xc2
+    0xc3 
+    0xc5 
+    0xc6 
+    0xc7 
+    0xc9 
+    0xca 
+    0xcb 
+    0xcd 
+    0xce 
+    0xcf}) 
+
+(defn read-jpg [stream]
+  (let [magick (read-bytes stream 2)]
+    (loop [x stream]
+      (let [byte (.read x)]
+        (if (= -1 byte)
+          false ;; done reading
+          (if (= 0xff byte)
+            (do 
+              ;; if we hit marker, skip marker
+              (read-bytes x 1)
+              (recur x))
+            (do
+              (if (contains? jpeg-sof byte)
+                (do (let [frame (read-bytes x 10)
+                          w (u16 (nth frame 6) (nth frame 5))
+                          h (u16 (nth frame 4) (nth frame 3))]
+                      {:width w
+                       :height h}))
+                (recur x)))))))))
+
 ;; ===== GIFS 
 
 (def gif-signature '(0x47 0x49 0x46))
-
-(defn u16 
-  "returns a little endian unsigned 16 bit integer"
-  [a b]
-  (bit-or
-    (bit-shift-left b 8)
-    a))
 
 ;; close stream??
 (defn read-gif [stream]
