@@ -23,15 +23,6 @@
     (doto (java.nio.ByteBuffer/wrap (byte-array byte-values))
       (.order java.nio.ByteOrder/BIG_ENDIAN))))
 
-(def png-signature 
-  [137 80 78 71 13 10 26 10])
-
-(defn recognize-png [])
-
-(defn recognize-jpeg [])
-
-(defn recognize-gif [])
-
 ;; ===== PNG
 
 (defn read-png [stream]
@@ -79,15 +70,26 @@
 
 ;; ===== GIFS 
 
-(def gif-signature '(0x47 0x49 0x46))
-
 ;; close stream??
 (defn read-gif [stream]
   (let [header (read-bytes stream 6)
-        is-gif? (= gif-signature (take 3 header))
         screen-descriptor (read-bytes stream 7)]
     {:width (u16 (first screen-descriptor) (second screen-descriptor))
      :height (u16 (nth screen-descriptor 2) (nth screen-descriptor 3))}))
+
+;; ===== INFO
+
+(def png-signature 
+  '(0x89 0x50 0x4e 0x47 0x0D 0x0A 0x1A 0x0A))
+
+(def jpg-signature
+  '(0xff 0xd8))
+
+(def gif-signature 
+  '(0x47 0x49 0x46))
+
+(defn info [stream])
+  
 
 ; (defn read-gif-canvas-width [screen-descriptor]
 ;   (println "GETTING WIDT")
