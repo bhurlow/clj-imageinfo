@@ -8,7 +8,8 @@
 (defn files [path]
   (->> (java.io.File. path)
        (file-seq)
-       (filter #(.isFile %))))
+       (filter #(.isFile %))
+       (filter #(not= ".DS_Store" (.getName %)))))
 
 (defn file->dimensions [file]
   (-> (.getName file)
