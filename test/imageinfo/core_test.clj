@@ -40,3 +40,14 @@
           (is (and (= (:width size) exp-width)
                    (= (:height size) exp-height))))))))
 
+;; ===== PNG
+
+(deftest png-dimensions
+  (testing "png dimensions" 
+    (doall
+      (for [file (files "test/imageinfo/test_images/png")]
+        (let [[exp-width exp-height] (file->dimensions file)
+               stream (io/input-stream file)
+               size (read-png stream)]
+          (is (= (:width size) exp-width)))))))
+

@@ -34,12 +34,11 @@
 
 ;; ===== PNG
 
-(defn read-png []
-  (let [stream (io/input-stream "test/imageinfo/test_images/png/333x333.png")]
-    ;; skip header info
-    (doall (read-bytes stream 16))
-    {:width (u32 (read-bytes stream 4))
-     :height (u32 (read-bytes stream 4))}))
+(defn read-png [stream]
+  ;; skip header info
+  (doall (read-bytes stream 16))
+  {:width (u32 (read-bytes stream 4))
+   :height (u32 (read-bytes stream 4))})
 
 ;; ===== JPEG
 
