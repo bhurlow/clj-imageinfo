@@ -25,7 +25,7 @@
         (let [expected-dimensions (file->dimensions file)
               ; msg (str "expected: " file expected-dimensions)
               stream (io/input-stream file)
-              size (read-gif stream)]
+              size (info stream)]
           (is (and (= (:width size) (first expected-dimensions)) 
                    (= (:height size) (second expected-dimensions)))))))))
                 
@@ -37,7 +37,7 @@
       (for [file (files "test/imageinfo/test_images/jpg")]
         (let [[exp-width exp-height] (file->dimensions file)
                stream (io/input-stream file)
-               size (read-jpg stream)]
+               size (info stream)]
           (is (and (= (:width size) exp-width)
                    (= (:height size) exp-height))))))))
 
@@ -49,6 +49,6 @@
       (for [file (files "test/imageinfo/test_images/png")]
         (let [[exp-width exp-height] (file->dimensions file)
                stream (io/input-stream file)
-               size (read-png stream)]
+               size (info stream)]
           (is (= (:width size) exp-width)))))))
 
